@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index'
 import { Button } from 'vant'
+import "amfe-flexible"    //动态改变和字体大小
 
 import 'vant/lib/index.css'
 

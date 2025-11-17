@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import postcssRem from 'postcss-rem'; 
+import postcssPxtorem from 'postcss-pxtorem' 
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,9 +15,9 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        postcssRem({
-          rootValue: 16, // 根字体大小（1rem = 16px）
-          propList: ['*'],
+        postcssPxtorem({
+          rootValue: 37.5, // 根字体大小（1rem = 37.5px）
+          propList: ['*'], // 所有属性都转换
         }),
       ],
     }

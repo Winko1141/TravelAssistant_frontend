@@ -1,23 +1,18 @@
 <template>
-  <div>
-    <p>聊天界面</p>
-    <van-button type="primary">主要按钮</van-button>
-    <van-button type="success">成功按钮</van-button>  
-    <p class="hello">
-      这是一个段落。
-    </p>
+  <div class="content">
+    <!-- 顶部区域 -->
+     <top></top>
   </div>
 </template>
 
 <script setup lang="ts">
-
+import top from '@/page/component/top/top.vue'
 
 
 </script>
 
 <style lang="less" scoped>
-.hello {
-  color: blue;
-  font-size: 30px;
+.content {
+  padding: 0 15px;
 }
 </style>

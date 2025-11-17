@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import postcssRem from 'postcss-rem'; 
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,4 +12,14 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  css: {
+    postcss: {
+      plugins: [
+        postcssRem({
+          rootValue: 16, // 根字体大小（1rem = 16px）
+          propList: ['*'],
+        }),
+      ],
+    }
+  }
 })

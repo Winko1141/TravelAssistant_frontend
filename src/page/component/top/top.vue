@@ -17,7 +17,7 @@
 <style lang="less" scoped>
 .main-header {
     display: flex;
-    padding: 30px 0;
+    padding-top: 30px ;
     .main-header-left {
         flex: 1; // 让左侧占据剩余空间
     }

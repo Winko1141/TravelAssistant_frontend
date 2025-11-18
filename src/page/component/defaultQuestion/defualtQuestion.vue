@@ -43,7 +43,7 @@
 .question-box {
     background-color: #f5f5f5;
     margin: 15px 0;
-    padding: 10px;
+    padding: 0 10px 10px 10px;
     border-radius: 10px;
     .question-tips {
         font-size: 15px;

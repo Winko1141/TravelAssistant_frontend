@@ -29,6 +29,7 @@
         object-fit: fill;
     }
     .name {
+        padding-top: 20px;
         font-size: 20px;
         color: #ff3474;
         font-family: 'NAME';
@@ -36,6 +37,7 @@
     .detail{
         font-weight: bold;
         line-height: 2;
+        font-size: 15px;
     }
 }
 </style>

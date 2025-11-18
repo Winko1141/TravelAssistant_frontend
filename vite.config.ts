@@ -21,5 +21,8 @@ export default defineConfig({
         }),
       ],
     }
+  },
+  server: {
+    host: '172.18.130.177',
   }
 })

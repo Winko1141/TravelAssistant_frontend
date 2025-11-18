@@ -31,6 +31,7 @@
     .name {
         font-size: 20px;
         color: #ff3474;
+        font-family: 'NAME';
     }
     .detail{
         font-weight: bold;

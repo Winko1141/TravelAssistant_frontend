@@ -5,5 +5,5 @@
 
 </script>
 <style scoped>
-
+@import "@/assets/font/font.css";
 </style>

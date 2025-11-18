@@ -7,13 +7,13 @@
     <span class="question-tips">你可以这样问我</span>
     <div class="question-list">
         <div class="question-icon">
-            <van-icon name="chat-o" color="#72ab53" />
+            <van-icon name="chat-o" color="#72ab53" size="35px" />
         </div>     
         <p>1111111111</p>
     </div>
     <div class="question-list">
         <div class="question-icon">
-            <van-icon name="chat-o" color="#72ab53" />
+            <van-icon name="chat-o" color="#72ab53"  size="35px" />
         </div>     
         <p>1111111111</p>
     </div>
@@ -52,12 +52,12 @@
         display: flex;
         align-items: center;
         background-color: #e3ece3;
-        margin-top: 10px;
-        padding: 2px 5px;
+        margin-top: 8px;
+        padding: 0 5px;
         border-radius: 10px;
 
         .question-icon {
-            margin: 5px;
+            margin: 3px;
         }
         p {
             font-size: 15px;

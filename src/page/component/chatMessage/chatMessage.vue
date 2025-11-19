@@ -8,15 +8,19 @@
         </div>
         <!-- 智能体回复 -->
         <div class="agent-message">
-            <p>智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p>
+            <loading class="text" />
+             <!-- <van-loading size="24px" class="text">加载中...</van-loading> -->
+            <!-- <p class="text">智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p> -->
         </div>
-        <div class="agent-image">
+        <!-- <div class="agent-image">
             <van-image width="120px" height="120px" radius="5" fit="cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script setup lang="ts">
+import loading from '../loading/loading.vue';
+
 
 </script>
 
@@ -73,7 +77,7 @@
         transform: translateY(20px);
         animation: fadeUp 0.3s ease-in-out forwards;
 
-        p {
+        .text {
             font-size: 16px;
             line-height: 1.5;
             background-color: #ffffff;

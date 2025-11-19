@@ -2,25 +2,30 @@
     <div class="chat-message">
         <div class="user-message">
             <p>用户发送纯文本</p>
+            <div class="user-image">
+                <van-image width="120px" height="120px" radius="5" fit="cover"
+                    src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
+            </div>
         </div>
-        <div class="user-image">
-            <van-image width="120px" height="120px" radius="5" fit="cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-        </div>
+
         <!-- 智能体回复 -->
         <div class="agent-message">
-            <loading class="text" />
-             <!-- <van-loading size="24px" class="text">加载中...</van-loading> -->
+            <!-- <loading class="text" /> -->
+            <!-- <van-loading size="24px" class="text">加载中...</van-loading> -->
             <!-- <p class="text">智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p> -->
-        </div>
-        <!-- <div class="agent-image">
+            <!-- <div class="agent-image">
             <van-image width="120px" height="120px" radius="5" fit="cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-        </div> -->
+                </div> -->
+
+        </div>
+        <!-- 火车票查询结果 -->
+        <queryTrainTickts />
     </div>
 </template>
 
 <script setup lang="ts">
 import loading from '../loading/loading.vue';
-
+import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
 
 </script>
 
@@ -38,26 +43,28 @@ import loading from '../loading/loading.vue';
         transform: translateY(20px);
         animation: fadeUp 0.3s ease-in-out forwards;
 
-        p{
-        font-size: 16px;
-        line-height: 1.5;
-        background-color: #83e651;
-        border-radius: 10px 0 10px 10px;
-        color: #202020;
-        padding: 8px 10px; 
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            background-color: #83e651;
+            border-radius: 10px 0 10px 10px;
+            color: #202020;
+            padding: 8px 10px;
+        }
     }
-    }
+
     @keyframes fadeUp {
         0% {
             opacity: 0;
             transform: translateY(20px);
         }
+
         100% {
             opacity: 1;
             transform: translateY(0);
         }
     }
-    
+
     .user-image {
         display: flex;
         flex-direction: column;
@@ -83,9 +90,10 @@ import loading from '../loading/loading.vue';
             background-color: #ffffff;
             border-radius: 0 10px 10px 10px;
             color: #202020;
-            padding: 8px 10px; 
+            padding: 8px 10px;
         }
     }
+
     .agent-image {
         display: flex;
         flex-direction: column;

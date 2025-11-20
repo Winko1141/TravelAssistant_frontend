@@ -20,12 +20,16 @@
         </div>
         <!-- 火车票查询结果 -->
         <queryTrainTickts />
+        <!-- 天气查询结果 -->
+        <weather />
     </div>
 </template>
 
 <script setup lang="ts">
 import loading from '../loading/loading.vue';
 import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
+import weather from '@/page/toolComponents/weather.vue';    
+
 
 </script>
 

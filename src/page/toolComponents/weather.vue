@@ -1,28 +1,29 @@
 <template>
-  <div class="weather-content">
-    <div class="weather-item">
-        <div class="day-time">
-            <p style="margin: 0 15px;">11月19日</p>           
-            <p>星期三</p>
+    <div style="height: 4px;"></div>
+    <div class="weather-content">
+        <div class="weather-item">
+            <div class="day-time">
+                <p style="margin: 0 15px;">11月19日</p>
+                <p>星期三</p>
+            </div>
+            <div class="day-weather">
+                <img src="@/assets/weather/晴.png" alt="">
+                <p>晴</p>
+            </div>
+            <div class="temperature">4-11℃</div>
         </div>
-        <div class="day-weather">
-            <img src="@/assets/weather/晴.png" alt="">
-            <p>晴</p>
+        <div class="weather-item">
+            <div class="day-time">
+                <p style="margin: 0 15px;">11月19日</p>
+                <p>星期四</p>
+            </div>
+            <div class="day-weather">
+                <img src="@/assets/weather/晴.png" alt="">
+                <p>多云</p>
+            </div>
+            <div class="temperature">14-19℃</div>
         </div>
-        <div class="temperature">4-11℃</div>
     </div>
-    <div class="weather-item">
-        <div class="day-time">
-            <p style="margin: 0 15px;">11月19日</p>           
-            <p>星期四</p>
-        </div>
-        <div class="day-weather">
-            <img src="@/assets/weather/晴.png" alt="">
-            <p>多云</p>
-        </div>
-        <div class="temperature">14-19℃</div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -48,27 +49,29 @@
             display: flex;
             align-items: center;
             flex: 2;
-           
+
         }
 
         .day-weather {
             display: flex;
             flex: 1;
             align-items: center;
-            p{
+
+            p {
                 font-size: 15px;
                 margin-left: 5px;
             }
+
             img {
                 width: 30px;
                 height: 30px;
             }
         }
+
         .temperature {
             font-size: 18px;
             flex: 1;
         }
     }
 }
-
 </style>

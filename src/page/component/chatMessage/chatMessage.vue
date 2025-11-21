@@ -22,6 +22,7 @@
         <queryTrainTickts />
         <!-- 天气查询结果 -->
         <weather />
+        <searchGoods />
     </div>
 </template>
 
@@ -29,7 +30,7 @@
 import loading from '../loading/loading.vue';
 import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
 import weather from '@/page/toolComponents/weather.vue';    
-
+import searchGoods from '@/page/toolComponents/searchGoods.vue';
 
 </script>
 

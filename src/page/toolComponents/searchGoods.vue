@@ -2,7 +2,6 @@
     <div style="height: 4px;"></div>
     <div class="goods-content">
         <p class="title">以下是为你推荐的商品：</p>
-
         <div class="goods-list">
             <div class="goods-item">
                 <img src="@/assets/222.jpg" alt="">

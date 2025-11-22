@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router/index'
-import { Button, Image as VanImage, Loading ,Uploader, Field, CellGroup  } from 'vant'
+import { Button, Image as VanImage, Loading ,Uploader, Field, CellGroup ,NavBar ,Picker, Popup} from 'vant'
 import { Icon } from 'vant';
 import "amfe-flexible"    //动态改变和字体大小
 
@@ -12,7 +12,10 @@ app.use(Icon)
 app.use(router)
 app.use(Loading)
 app.use(Uploader)
+app.use(NavBar)
 app.use(Field)
+app.use(Picker)
+app.use(Popup)
 app.use(CellGroup)
 app.use(Button)
 app.use(VanImage)

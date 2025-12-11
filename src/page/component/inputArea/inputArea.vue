@@ -12,19 +12,63 @@
         </div>
         <div class="input-box-area">
             <van-cell-group inset  class="input-content">
-                <van-field rows="1" autosize  type="textarea"  />
+                <van-field rows="1" autosize  type="textarea"  v-model="inputMessage" />
                  <!-- <input type="textarea" class="input-content"   autosize="{minRows: 1, maxRows: 3 }" /> -->
             </van-cell-group>
-            <van-button type="success"  class="send-btn">发送</van-button>
+            <van-button 
+              type="success"  
+              class="send-btn"
+              @click="handleSend"
+            >
+              发送
+            </van-button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { chatMessage } from '@/api/chat';
 
+
+const inputMessage = ref('');
 const fileList= ref([{ url: 'https://fastly.jsdelivr.net/npm/@vant/assets/leaf.jpeg' }]);
 
+// 定义 emit 事件用于通知父组件
+const emit = defineEmits<{
+  send: [message: string, onMessage: (content: string) => void]
+}>();
+
+const handleSend = async () => {
+  const message = inputMessage.value.trim();
+  
+//   if (!message) {
+//     showToast('请输入消息');
+//     return;
+//   }
+
+//   if (isLoading.value) {
+//     showToast('消息发送中，请稍候');
+//     return;
+//   }
+
+//   isLoading.value = true;
+  
+  try {
+    // 清空输入框
+    inputMessage.value = '';
+    
+    // 发送消息给父组件处理
+    emit('send', message, (content: string) => {
+      // 流式回调
+    });
+  } catch (error) {
+    // showToast('发送失败，请重试');
+    console.error('发送消息失败:', error);
+  } finally {
+    // isLoading.value = false;
+  }
+}
 </script>
 
 <style lang="less" scoped>

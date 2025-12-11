@@ -19,10 +19,10 @@
 
         </div>
         <!-- 火车票查询结果 -->
-        <queryTrainTickts />
+        <!-- <queryTrainTickts /> -->
         <!-- 天气查询结果 -->
-        <weather />
-        <searchGoods />
+        <!-- <weather />
+        <searchGoods /> -->
 
         <!-- 底部输入框 -->
         <inputArea />
@@ -30,11 +30,85 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import loading from '../loading/loading.vue';
 import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
 import weather from '@/page/toolComponents/weather.vue';    
 import searchGoods from '@/page/toolComponents/searchGoods.vue';
 import inputArea from '../inputArea/inputArea.vue';
+import { chatMessage, chatMessage as sendChatMessage } from '@/api/chat';
+
+// 消息列表
+const messages = ref<any[]>([]);
+const isLoading = ref(false)
+
+// 发送消息函数
+// 处理发送消息
+const handleSendMessage = async (message: string, onMessageCallback?: (content: string) => void) => {
+  try {
+    // 添加用户消息
+    messages.value.push({
+      role: 'user',
+      content: message
+    });
+
+    // 添加加载状态的智能体消息
+    const agentMessageIndex = messages.value.length;
+    messages.value.push({
+      role: 'agent',
+      content: '',
+      isLoading: true
+    });
+
+    isLoading.value = true;
+    
+    // 滚动到底部
+    // await nextTick();
+    scrollToBottom();
+
+    // 调用聊天 API
+    await chatMessage(message, (content: string) => {
+      // 更新智能体消息内容
+      const agentMsg = messages.value[agentMessageIndex];
+      if (agentMsg) {
+        agentMsg.content += content;
+      }
+      
+      // 如果有回调函数也执行
+      if (onMessageCallback) {
+        onMessageCallback(content);
+      }
+
+      // 滚动到底部
+      scrollToBottom();
+    });
+
+    // 移除加载状态
+    const agentMsg = messages.value[agentMessageIndex];
+    if (agentMsg) {
+      agentMsg.isLoading = false;
+    }
+
+  } catch (error) {
+    // showToast('消息发送失败');
+    console.error('发送消息失败:', error);
+    
+    // 移除失败的消息
+    messages.value.pop();
+  } finally {
+    isLoading.value = false;
+  }
+};
+// 滚动到底部
+const scrollToBottom = () => {
+  const container = document.querySelector('.chat-message');
+  if (container) {
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 0);
+  }
+};
+
 
 </script>
 

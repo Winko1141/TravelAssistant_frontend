@@ -1,58 +1,96 @@
 <template>
-    <div class="chat-message">
-        <div class="user-message">
-            <p>用户发送纯文本</p>
+  <div class="chat-message">
+    <!-- 动态渲染对话 -->
+    <div v-for="(msg, index) in messages" :key="index"
+      :class="['message-item', msg.role === 'user' ? 'user-item' : 'agent-item']">
+      <!-- 消息内容 -->
+      <div class="message-content">
+        <!-- 用户信息 -->
+        <div v-if="msg.role === 'user'" class="user-message">
+          <p>{{ msg.content }}</p>
+          <div class="user-image">
+            <van-image width="120px" height="120px" radius="5" fit="cover"
+              src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
+          </div>
+        </div>
+        <div v-else class="agent-message">
+          <!-- 智能体加载中时显示 loading 组件，否则显示文本 -->
+          <div v-if="msg.isLoading">
+            <loading class="loading" />
+          </div>
+          <div v-else class="text">
+            {{ msg.content }}
+          </div>
+          <div class="agent-image">
+            <!-- <van-image width="120px" height="120px" radius="5" fit="cover"
+              src="../../../assets/222.jpg" /> -->
+              <img src="@/assets/头像1.png" alt="">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- <div class="user-message">
+      <p>用户发送纯文本</p>
             <div class="user-image">
                 <van-image width="120px" height="120px" radius="5" fit="cover"
                     src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
             </div>
-        </div>
+    </div> -->
 
-        <!-- 智能体回复 -->
-        <div class="agent-message">
-            <!-- <loading class="text" /> -->
-            <!-- <van-loading size="24px" class="text">加载中...</van-loading> -->
-            <!-- <p class="text">智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p> -->
-            <!-- <div class="agent-image">
-            <van-image width="120px" height="120px" radius="5" fit="cover" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-                </div> -->
+    <!-- 智能体回复 -->
+    <!-- <div class="agent-message">
+      <loading class="text" v-if="isLoading" />
+      <van-loading size="24px" class="text">加载中...</van-loading>
+      <p class="text">智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p>
+      <div class="agent-image">
+        <van-image width="120px" height="120px" radius="5" fit="cover"
+          src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
+      </div>
+    </div> -->
+    <!-- 火车票查询结果 -->
+    <queryTrainTickts />
+    <!-- 天气查询结果 -->
+    <weather />
+    <searchGoods />
 
-        </div>
-        <!-- 火车票查询结果 -->
-        <!-- <queryTrainTickts /> -->
-        <!-- 天气查询结果 -->
-        <!-- <weather />
-        <searchGoods /> -->
-
-        <!-- 底部输入框 -->
-        <inputArea />
-    </div>
+    <!-- 底部输入框 -->
+    <inputArea @send="handleSendMessage" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import loading from '../loading/loading.vue';
 import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
-import weather from '@/page/toolComponents/weather.vue';    
+import weather from '@/page/toolComponents/weather.vue';
 import searchGoods from '@/page/toolComponents/searchGoods.vue';
 import inputArea from '../inputArea/inputArea.vue';
-import { chatMessage, chatMessage as sendChatMessage } from '@/api/chat';
+import { chatMessage } from '@/api/chat';
 
 // 消息列表
-const messages = ref<any[]>([]);
+const messages = ref<any[]>([
+  {
+    role: 'agent',
+    content: '你好,有什么可以帮你的吗？',
+    isLoading: false
+  }
+]);
 const isLoading = ref(false)
 
-// 发送消息函数
-// 处理发送消息
-const handleSendMessage = async (message: string, onMessageCallback?: (content: string) => void) => {
+
+
+// 发送消息的函数：用户输入的消息通过这个函数添加到聊天中
+const handleSendMessage = async (message: string, onMessage: (content: string) => void) => {
   try {
-    // 添加用户消息
+    // 1. 添加用户消息到 messages 数组
     messages.value.push({
       role: 'user',
-      content: message
+      content: message,
+      isLoading: false
     });
 
-    // 添加加载状态的智能体消息
+    // 2. 添加加载状态的智能体消息，等待智能体的回复
     const agentMessageIndex = messages.value.length;
     messages.value.push({
       role: 'agent',
@@ -60,43 +98,49 @@ const handleSendMessage = async (message: string, onMessageCallback?: (content: 
       isLoading: true
     });
 
-    isLoading.value = true;
-    
-    // 滚动到底部
-    // await nextTick();
+    // 设置加载中状态
+    // isLoading.value = true;
+
+    // 滚动到页面底部，确保最新消息可见
     scrollToBottom();
 
-    // 调用聊天 API
+    // 3. 调用聊天 API，智能体会返回回复的内容
     await chatMessage(message, (content: string) => {
-      // 更新智能体消息内容
-      const agentMsg = messages.value[agentMessageIndex];
-      if (agentMsg) {
-        agentMsg.content += content;
-      }
-      
-      // 如果有回调函数也执行
-      if (onMessageCallback) {
-        onMessageCallback(content);
-      }
-
-      // 滚动到底部
+      // 更新智能体的消息内容
+      // const agentMsg = messages.value[agentMessageIndex];
+      // if (agentMsg) {
+      //   agentMsg.content += content; // 将内容添加到智能体消息中
+      // }
+      // 实时更新智能体的消息内容（流式拼接）
+      messages.value[agentMessageIndex].content += content;
+      // 滚动到页面底部，确保最新的内容可见
       scrollToBottom();
     });
 
-    // 移除加载状态
-    const agentMsg = messages.value[agentMessageIndex];
-    if (agentMsg) {
-      agentMsg.isLoading = false;
-    }
-
+    // 4. 移除智能体消息的加载状态
+    //     const agentMsg = messages.value[agentMessageIndex];
+    //     if (agentMsg) {
+    //       agentMsg.isLoading = false;
+    //     }
+    //   } catch (error) {
+    //     console.error('发送消息失败:', error);
+    //   } finally {
+    //     // 完成消息发送，关闭加载状态
+    //     isLoading.value = false;
+    //   }
+    // };
+    messages.value[agentMessageIndex].isLoading = false;
   } catch (error) {
-    // showToast('消息发送失败');
-    console.error('发送消息失败:', error);
-    
-    // 移除失败的消息
-    messages.value.pop();
+    console.error('发送失败:', error);
+    // 错误处理：显示失败提示
+    const agentIndex = messages.value.length - 1;
+    messages.value[agentIndex] = {
+      role: 'agent',
+      content: '抱歉，消息发送失败，请重试～',
+      isLoading: false
+    };
   } finally {
-    isLoading.value = false;
+    scrollToBottom();
   }
 };
 // 滚动到底部
@@ -114,77 +158,82 @@ const scrollToBottom = () => {
 
 <style lang="less" scoped>
 .chat-message {
+  display: flex;
+  flex-direction: column;
+
+  // 用户消息
+  .user-message {
+    margin-top: 15px;
+    max-width: 70%;
+    align-self: flex-end;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.3s ease-in-out forwards;
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #83e651;
+      border-radius: 10px 0 10px 10px;
+      color: #202020;
+      padding: 8px 10px;
+    }
+  }
+
+  @keyframes fadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .user-image {
     display: flex;
     flex-direction: column;
 
-    // 用户消息
-    .user-message {
-        margin-top: 15px;
-        max-width: 70%;
-        align-self: flex-end;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeUp 0.3s ease-in-out forwards;
-
-        p {
-            font-size: 16px;
-            line-height: 1.5;
-            background-color: #83e651;
-            border-radius: 10px 0 10px 10px;
-            color: #202020;
-            padding: 8px 10px;
-        }
+    .van-image {
+      align-self: flex-end;
+      margin-top: 10px;
     }
+  }
 
-    @keyframes fadeUp {
-        0% {
-            opacity: 0;
-            transform: translateY(20px);
-        }
+  // 智能体消息
+  .agent-message {
+    margin-top: 15px;
+    max-width: 95%;
+    align-self: flex-start;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.3s ease-in-out forwards;
 
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .text {
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: #ffffff;
+      border-radius: 0 10px 10px 10px;
+      color: #202020;
+      padding: 8px 10px;
     }
+  }
 
-    .user-image {
-        display: flex;
-        flex-direction: column;
-
-        .van-image {
-            align-self: flex-end;
-            margin-top: 10px;
-        }
+  .agent-image {
+    display: flex;
+    flex-direction: column;
+    img {
+        object-fit: cover;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
     }
-
-    // 智能体消息
-    .agent-message {
-        margin-top: 15px;
-        max-width: 95%;
-        align-self: flex-start;
-        opacity: 0;
-        transform: translateY(20px);
-        animation: fadeUp 0.3s ease-in-out forwards;
-
-        .text {
-            font-size: 16px;
-            line-height: 1.5;
-            background-color: #ffffff;
-            border-radius: 0 10px 10px 10px;
-            color: #202020;
-            padding: 8px 10px;
-        }
+    .van-image {
+      align-self: flex-start;
+      margin-top: 10px;
     }
-
-    .agent-image {
-        display: flex;
-        flex-direction: column;
-
-        .van-image {
-            align-self: flex-start;
-            margin-top: 10px;
-        }
-    }
+  }
 }
 </style>

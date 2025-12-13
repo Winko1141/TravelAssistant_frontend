@@ -39,36 +39,23 @@ const emit = defineEmits<{
   send: [message: string, onMessage: (content: string) => void]
 }>();
 
+// 处理发送按钮点击事件：发送消息到父组件
 const handleSend = async () => {
   const message = inputMessage.value.trim();
-  
-//   if (!message) {
-//     showToast('请输入消息');
-//     return;
-//   }
+  // 如果没有输入消息，则不处理
+  if (!message) return;
 
-//   if (isLoading.value) {
-//     showToast('消息发送中，请稍候');
-//     return;
-//   }
-
-//   isLoading.value = true;
-  
   try {
-    // 清空输入框
+    // 发送消息后清空输入框
     inputMessage.value = '';
-    
-    // 发送消息给父组件处理
-    emit('send', message, (content: string) => {
-      // 流式回调
+    // 触发 send 事件，通知父组件发送消息
+    emit('send', message,async (content: string) => {
+      // 可用流式回调，暂时没有做处理
     });
   } catch (error) {
-    // showToast('发送失败，请重试');
     console.error('发送消息失败:', error);
-  } finally {
-    // isLoading.value = false;
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

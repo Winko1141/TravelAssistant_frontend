@@ -8,23 +8,17 @@
         <!-- 用户信息 -->
         <div v-if="msg.role === 'user'" class="user-message">
           <p>{{ msg.content }}</p>
-          <div class="user-image">
-            <van-image width="120px" height="120px" radius="5" fit="cover"
-              src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-          </div>
         </div>
         <div v-else class="agent-message">
+          <div class="agent-image">
+              <img src="@/assets/头像1.png" alt="">
+          </div>
           <!-- 智能体加载中时显示 loading 组件，否则显示文本 -->
           <div v-if="msg.isLoading">
             <loading class="loading" />
           </div>
           <div v-else class="text">
             {{ msg.content }}
-          </div>
-          <div class="agent-image">
-            <!-- <van-image width="120px" height="120px" radius="5" fit="cover"
-              src="../../../assets/222.jpg" /> -->
-              <img src="@/assets/头像1.png" alt="">
           </div>
         </div>
 
@@ -49,11 +43,11 @@
       </div>
     </div> -->
     <!-- 火车票查询结果 -->
-    <queryTrainTickts />
+    <!-- <queryTrainTickts /> -->
     <!-- 天气查询结果 -->
-    <weather />
-    <searchGoods />
-
+    <!-- <weather /> -->
+    <!-- <searchGoods /> -->
+    <div style="height: 100px;"></div>
     <!-- 底部输入框 -->
     <inputArea @send="handleSendMessage" />
   </div>
@@ -118,17 +112,7 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     });
 
     // 4. 移除智能体消息的加载状态
-    //     const agentMsg = messages.value[agentMessageIndex];
-    //     if (agentMsg) {
-    //       agentMsg.isLoading = false;
-    //     }
-    //   } catch (error) {
-    //     console.error('发送消息失败:', error);
-    //   } finally {
-    //     // 完成消息发送，关闭加载状态
-    //     isLoading.value = false;
-    //   }
-    // };
+
     messages.value[agentMessageIndex].isLoading = false;
   } catch (error) {
     console.error('发送失败:', error);
@@ -161,10 +145,25 @@ const scrollToBottom = () => {
   display: flex;
   flex-direction: column;
 
+    /* 新增：控制每条消息项的横向布局 */
+  .message-item {
+    display: flex;
+    width: 100%;
+  }
+  /* 用户项靠右，智能体项靠左 */
+  .message-item.user-item {
+    justify-content: flex-end;
+  }
+  .message-item.agent-item {
+    justify-content: flex-start;
+  }
+
   // 用户消息
   .user-message {
     margin-top: 15px;
     max-width: 70%;
+    // width: fit-content;
+    margin-left: auto;
     align-self: flex-end;
     opacity: 0;
     transform: translateY(20px);
@@ -177,6 +176,7 @@ const scrollToBottom = () => {
       border-radius: 10px 0 10px 10px;
       color: #202020;
       padding: 8px 10px;
+      // white-space: nowrap;
     }
   }
 
@@ -205,11 +205,12 @@ const scrollToBottom = () => {
   // 智能体消息
   .agent-message {
     margin-top: 15px;
-    max-width: 95%;
-    align-self: flex-start;
+    max-width: 90%;
+    // align-self: flex-start;
     opacity: 0;
     transform: translateY(20px);
     animation: fadeUp 0.3s ease-in-out forwards;
+    display: flex;
 
     .text {
       font-size: 16px;
@@ -218,6 +219,8 @@ const scrollToBottom = () => {
       border-radius: 0 10px 10px 10px;
       color: #202020;
       padding: 8px 10px;
+      margin-left: 8px;
+      margin-top: 10px;
     }
   }
 

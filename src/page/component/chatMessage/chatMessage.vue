@@ -24,28 +24,10 @@
 
       </div>
     </div>
-    <!-- <div class="user-message">
-      <p>用户发送纯文本</p>
-            <div class="user-image">
-                <van-image width="120px" height="120px" radius="5" fit="cover"
-                    src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-            </div>
-    </div> -->
-
-    <!-- 智能体回复 -->
-    <!-- <div class="agent-message">
-      <loading class="text" v-if="isLoading" />
-      <van-loading size="24px" class="text">加载中...</van-loading>
-      <p class="text">智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本智能体发送纯文本</p>
-      <div class="agent-image">
-        <van-image width="120px" height="120px" radius="5" fit="cover"
-          src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
-      </div>
-    </div> -->
     <!-- 火车票查询结果 -->
     <!-- <queryTrainTickts /> -->
     <!-- 天气查询结果 -->
-    <!-- <weather /> -->
+    <weather />
     <!-- <searchGoods /> -->
     <div style="height: 100px;"></div>
     <!-- 底部输入框 -->

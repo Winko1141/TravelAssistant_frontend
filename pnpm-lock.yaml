@@ -14,6 +14,9 @@ importers:
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      qweather-icons:
+        specifier: ^1.8.0
+        version: 1.8.0
       vant:
         specifier: ^4.9.21
         version: 4.9.21(vue@3.5.24(typescript@5.9.3))
@@ -640,6 +643,10 @@ packages:
   prr@1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
 
+  qweather-icons@1.8.0:
+    resolution: {integrity: sha512-Ti7KGrWXSV7e5HMpjPhDYua8hwC3t0nScNOSQ3kLPehsOja5cioZw8bcKi7jeAGBlVLrgAkLla5xVEYlH1s5Jw==}
+    engines: {node: '>=10'}
+
   rollup@4.53.2:
     resolution: {integrity: sha512-MHngMYwGJVi6Fmnk6ISmnk7JAHRNF0UkuucA0CUW3N3a4KnONPEZz+vUanQP/ZC/iY1Qkf3bwPWzyY84wEks1g==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -1237,6 +1244,8 @@ snapshots:
 
   prr@1.0.1:
     optional: true
+
+  qweather-icons@1.8.0: {}
 
   rollup@4.53.2:
     dependencies:

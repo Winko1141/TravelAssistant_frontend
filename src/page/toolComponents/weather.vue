@@ -76,11 +76,12 @@ defineProps<{
   padding: 12px;
   margin-left: 8px;
   color: #fff;
-  max-width: 320px;
+  width: 320px;
 }
 
 .header {
   font-weight: bold;
+    font-size: 18px;
   margin-bottom: 8px;
 }
 
@@ -114,6 +115,7 @@ defineProps<{
   .temp {
     margin-left: auto;
     font-weight: bold;
+    font-size: 25px;
   }
 }
 

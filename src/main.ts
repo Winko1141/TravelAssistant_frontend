@@ -4,7 +4,7 @@ import router from './router/index'
 import { Button, Image as VanImage, Loading ,Uploader, Field, CellGroup ,NavBar ,Picker, Popup} from 'vant'
 import { Icon } from 'vant';
 import "amfe-flexible"    //动态改变和字体大小
-
+import 'qweather-icons/font/qweather-icons.css'
 import 'vant/lib/index.css'
 
 const app = createApp(App)

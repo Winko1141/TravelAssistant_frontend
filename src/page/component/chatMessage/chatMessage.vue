@@ -17,9 +17,12 @@
           <div v-if="msg.isLoading">
             <loading class="loading" />
           </div>
-          <div v-else class="text">
+          <!-- 普通聊天 -->
+          <div v-else-if="msg.type === 'text'" class="text">
             {{ msg.content }}
           </div>
+          <!-- 🌦 天气卡片 -->
+          <weather v-else-if="msg.type === 'weather'" :data="msg.data" />
         </div>
 
       </div>
@@ -27,7 +30,7 @@
     <!-- 火车票查询结果 -->
     <!-- <queryTrainTickts /> -->
     <!-- 天气查询结果 -->
-    <weather />
+    <!-- <weather /> -->
     <!-- <searchGoods /> -->
     <div style="height: 100px;"></div>
     <!-- 底部输入框 -->
@@ -51,6 +54,7 @@ import { handleMessage } from '@/api/handleMessage';
 const messages = ref<any[]>([
   {
     role: 'agent',
+    type: 'text',
     content: '你好,有什么可以帮你的吗？',
     isLoading: false
   }
@@ -73,6 +77,7 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     const agentMessageIndex = messages.value.length;
     messages.value.push({
       role: 'agent',
+      type: 'text',
       content: '',
       isLoading: true
     });

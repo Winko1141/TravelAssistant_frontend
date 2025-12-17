@@ -43,6 +43,9 @@ import weather from '@/page/toolComponents/weather.vue';
 import searchGoods from '@/page/toolComponents/searchGoods.vue';
 import inputArea from '../inputArea/inputArea.vue';
 import { chatMessage } from '@/api/chat';
+import { handleMessage } from '@/api/handleMessage';
+
+
 
 // 消息列表
 const messages = ref<any[]>([
@@ -81,12 +84,7 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     scrollToBottom();
 
     // 3. 调用聊天 API，智能体会返回回复的内容
-    await chatMessage(message, (content: string) => {
-      // 更新智能体的消息内容
-      // const agentMsg = messages.value[agentMessageIndex];
-      // if (agentMsg) {
-      //   agentMsg.content += content; // 将内容添加到智能体消息中
-      // }
+    await handleMessage(message, (content: string) => {
       // 实时更新智能体的消息内容（流式拼接）
       messages.value[agentMessageIndex].content += content;
       // 滚动到页面底部，确保最新的内容可见

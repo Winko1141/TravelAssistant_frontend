@@ -76,7 +76,7 @@ defineProps<{
   padding: 12px;
   margin-left: 8px;
   color: #fff;
-  width: 320px;
+  width: 280px;
 }
 
 .header {

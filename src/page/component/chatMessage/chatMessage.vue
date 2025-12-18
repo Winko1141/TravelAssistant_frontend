@@ -164,8 +164,8 @@ const scrollToBottom = () => {
   // 用户消息
   .user-message {
     margin-top: 15px;
-    max-width: 70%;
-    // width: fit-content;
+    // max-width: 90%;
+    width: fit-content;
     margin-left: auto;
     align-self: flex-end;
     opacity: 0;
@@ -179,7 +179,8 @@ const scrollToBottom = () => {
       border-radius: 10px 0 10px 10px;
       color: #202020;
       padding: 8px 10px;
-      // white-space: nowrap;
+      // white-space: pre-wrap;
+      // word-break: break-all;
     }
   }
 

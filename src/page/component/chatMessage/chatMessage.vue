@@ -23,6 +23,8 @@
           </div>
           <!-- 🌦 天气卡片 -->
           <weather v-else-if="msg.type === 'weather'" :data="msg.data" />
+          <!-- 🚄 火车票卡片 -->
+          <trainTickets v-else-if="msg.type === 'tickts'" :data="msg.data" />
         </div>
 
       </div>
@@ -41,11 +43,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import loading from '../loading/loading.vue';
-import queryTrainTickts from '@/page/toolComponents/queryTrainTickts.vue';
+import trainTickets from '@/page/toolComponents/trainTickets.vue';
 import weather from '@/page/toolComponents/weather.vue';
-import searchGoods from '@/page/toolComponents/searchGoods.vue';
 import inputArea from '../inputArea/inputArea.vue';
-import { chatMessage } from '@/api/chat';
 import { handleMessage } from '@/api/handleMessage';
 
 
@@ -88,13 +88,6 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     // 滚动到页面底部，确保最新消息可见
     scrollToBottom();
 
-    // 3. 调用聊天 API，智能体会返回回复的内容
-    // await handleMessage(message, (content: string) => {
-    //   // 实时更新智能体的消息内容（流式拼接）
-    //   messages.value[agentMessageIndex].content += content;
-    //   // 滚动到页面底部，确保最新的内容可见
-    //   scrollToBottom();
-    // });
     const res = await handleMessage(message, (content) => {
       messages.value[agentMessageIndex].content += content;
     });
@@ -107,6 +100,18 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
       messages.value.push({
         role: 'agent',
         type: 'weather',
+        data: res.data,
+        isLoading: false
+      });
+      // 插入 trainTickts 消息
+    } else if (res?.type === 'tickts') {
+      // 删除 loading 的 agent 消息
+      messages.value.splice(agentMessageIndex, 1);
+
+      // 插入火车票消息
+      messages.value.push({
+        role: 'agent',
+        type: 'tickts',
         data: res.data,
         isLoading: false
       });

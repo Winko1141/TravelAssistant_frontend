@@ -13,13 +13,14 @@
           <div class="agent-image">
             <img src="@/assets/头像1.png" alt="">
           </div>
+          
+          <!-- 普通聊天 -->
+          <div v-if="msg.type === 'text'" class="text">
+            {{ msg.content }}
+          </div>
           <!-- 智能体加载中时显示 loading 组件，否则显示文本 -->
           <div v-if="msg.isLoading">
             <loading class="loading" />
-          </div>
-          <!-- 普通聊天 -->
-          <div v-else-if="msg.type === 'text'" class="text">
-            {{ msg.content }}
           </div>
           <!-- 🌦 天气卡片 -->
           <weather v-else-if="msg.type === 'weather'" :data="msg.data" />
@@ -74,48 +75,49 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     });
 
     // 2. 添加加载状态的智能体消息，等待智能体的回复
-    const agentMessageIndex = messages.value.length;
+    // const agentMessageIndex = messages.value.length;
     messages.value.push({
       role: 'agent',
       type: 'text',
       content: '',
       isLoading: true
     });
-
+  const agentMessageIndex = messages.value.length - 1;
     // 设置加载中状态
     // isLoading.value = true;
 
     // 滚动到页面底部，确保最新消息可见
-    scrollToBottom();
-
-    const res = await handleMessage(message, (content) => {
-      messages.value[agentMessageIndex].content += content;
-    });
-
+    // scrollToBottom();
+const res = await handleMessage(
+  message,
+  (content) => {
+    messages.value[agentMessageIndex].content += content;
+    scrollToBottom(); // ✅ 实时滚动
+  },
+  () => {
+    messages.value[agentMessageIndex].isLoading = false; // ✅ 流结束关闭 loading
+  }
+);
     if (res?.type === 'weather') {
-      // 删除 loading 的 agent 消息
-      messages.value.splice(agentMessageIndex, 1);
+  messages.value.splice(agentMessageIndex, 1);
 
-      // 插入 weather 消息
-      messages.value.push({
-        role: 'agent',
-        type: 'weather',
-        data: res.data,
-        isLoading: false
-      });
-      // 插入 trainTickts 消息
-    } else if (res?.type === 'tickts') {
-      // 删除 loading 的 agent 消息
-      messages.value.splice(agentMessageIndex, 1);
+  messages.value.push({
+    role: 'agent',
+    type: 'weather',
+    data: res.data,
+    isLoading: false
+  });
 
-      // 插入火车票消息
-      messages.value.push({
-        role: 'agent',
-        type: 'tickts',
-        data: res.data,
-        isLoading: false
-      });
-    }
+} else if (res?.type === 'tickts') {
+  messages.value.splice(agentMessageIndex, 1);
+
+  messages.value.push({
+    role: 'agent',
+    type: 'tickts',
+    data: res.data,
+    isLoading: false
+  });
+}
 
     // 4. 移除智能体消息的加载状态
 

@@ -15,8 +15,8 @@
           </div>
           
           <!-- 普通聊天 -->
-          <div v-if="msg.type === 'text'" class="text">
-            {{ msg.content }}
+          <div v-if="msg.type === 'text'" class="text" v-html="renderMarkdown(msg.content)">
+
           </div>
           <!-- 智能体加载中时显示 loading 组件，否则显示文本 -->
           <div v-if="msg.isLoading">
@@ -48,6 +48,7 @@ import trainTickets from '@/page/toolComponents/trainTickets.vue';
 import weather from '@/page/toolComponents/weather.vue';
 import inputArea from '../inputArea/inputArea.vue';
 import { handleMessage } from '@/api/handleMessage';
+import { marked } from 'marked'
 
 
 
@@ -144,7 +145,9 @@ const scrollToBottom = () => {
     }, 0);
   }
 };
-
+const renderMarkdown = (text: string) => {
+  return marked.parse(text)
+}
 
 </script>
 

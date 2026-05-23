@@ -3,11 +3,11 @@
         <!-- 图片上传展示 -->
         <van-uploader v-model="fileList" multiple max-count="1" preview-size="70px" class="update-img"/>
         <div class="data-query">
-       <van-button type="default" size="small" @click="showQuestionnaire = true">行程规划</van-button>
-            <van-button type="default" size="small">查询火车票</van-button>
-            <van-button type="default" size="small">查询天气</van-button>
+         <van-button type="default" size="small" @click="showQuestionnaire = true">行程规划</van-button>
+          <van-button type="default" size="small" @click="showTrainTicketPage = true">查询火车票</van-button>
+          <van-button type="default" size="small" @click="showWeatherPage = true">查询天气</van-button>
             <van-uploader>
-                <van-button type="default" size="small" style="display: flex;">图片问答</van-button>
+                <!-- <van-button type="default" size="small" style="display: flex;">图片问答</van-button> -->
             </van-uploader>
             <van-button type="default" size="small">一键投诉</van-button>
         </div>
@@ -28,12 +28,22 @@
         <van-popup v-model:show="showQuestionnaire" round position="bottom" :style="{ height: '88vh' }">
             <questionNaire @confirm="handleQuestionnaireConfirm" />
         </van-popup>
+
+        <van-popup v-model:show="showTrainTicketPage" round position="bottom" :style="{ height: '88vh' }">
+          <trainTickts @confirm="handleTrainTicketConfirm" />
+        </van-popup>
+
+        <van-popup v-model:show="showWeatherPage" round position="bottom" :style="{ height: '88vh' }">
+          <weatherPage @confirm="handleWeatherConfirm" />
+        </van-popup>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import questionNaire from '../questionNaire/questionNaire.vue';
+    import trainTickts from '../trainTickts/trainTickts.vue';
+    import weatherPage from '../weather/weather.vue';
 
 interface QuestionnairePayload {
   destination: string
@@ -44,10 +54,24 @@ interface QuestionnairePayload {
   crowdTags: string[]
 }
 
+interface TrainTicketPayload {
+  origin: string
+  destination: string
+  travelDate: string
+}
+
+interface WeatherPayload {
+  city: string
+  startDate: string
+  endDate: string
+}
+
 
 const inputMessage = ref('');
 const fileList= ref([{ url: 'https://fastly.jsdelivr.net/npm/@vant/assets/leaf.jpeg' }]);
 const showQuestionnaire = ref(false);
+const showTrainTicketPage = ref(false);
+const showWeatherPage = ref(false);
 
 // 定义 emit 事件用于通知父组件
 const emit = defineEmits<{
@@ -62,8 +86,20 @@ const sendByMessage = (message: string) => {
 
 const handleQuestionnaireConfirm = (payload: QuestionnairePayload) => {
   const dateText = payload.travelDate ? `，出行日期 ${payload.travelDate}` : ''
-  const content = `请根据以下信息规划行程：目的地 ${payload.destination}，游玩 ${payload.days} 天，出行人数 ${payload.people} 人${dateText}，游玩节奏 ${payload.rhythm}，人群标签 ${payload.crowdTags.join('、')}。`
+  const content = `请根据以下信息规划行程：目的地 ${payload.destination}，游玩 ${payload.days} 天，出行人数 ${payload.people} 人${dateText}，游玩节奏 ${payload.rhythm}，${payload.crowdTags.join('、')}。`
   showQuestionnaire.value = false
+  sendByMessage(content)
+}
+
+const handleTrainTicketConfirm = (payload: TrainTicketPayload) => {
+  const content = `请帮我查询火车票：起始地 ${payload.origin}，目的地 ${payload.destination}，出行日期 ${payload.travelDate}。`
+  showTrainTicketPage.value = false
+  sendByMessage(content)
+}
+
+const handleWeatherConfirm = (payload: WeatherPayload) => {
+  const content = `请帮我查询天气：城市 ${payload.city}，日期 ${payload.startDate} 至 ${payload.endDate}。`
+  showWeatherPage.value = false
   sendByMessage(content)
 }
 

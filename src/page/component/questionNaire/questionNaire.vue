@@ -88,7 +88,7 @@ import { reactive } from 'vue'
 import { showToast } from 'vant'
 
 type RhythmType = '悠闲慢逛' | '常规打卡' | '紧凑暴走' | '其他'
-type CrowdType = '老人' | '孩童' | '学生' | '情侣' | '亲子' | '团建' | '其他'
+type CrowdType = '老人' | '孩童' | '学生' | '情侣' | '亲子' |'朋友' | '团建' | '其他'
 
 interface QuestionnairePayload {
   destination: string

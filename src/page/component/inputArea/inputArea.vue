@@ -3,6 +3,7 @@
         <!-- 图片上传展示 -->
         <van-uploader v-model="fileList" multiple max-count="1" preview-size="70px" class="update-img"/>
         <div class="data-query">
+       <van-button type="default" size="small" @click="showQuestionnaire = true">行程规划</van-button>
             <van-button type="default" size="small">查询火车票</van-button>
             <van-button type="default" size="small">查询天气</van-button>
             <van-uploader>
@@ -23,21 +24,48 @@
               发送
             </van-button>
         </div>
+
+        <van-popup v-model:show="showQuestionnaire" round position="bottom" :style="{ height: '88vh' }">
+            <questionNaire @confirm="handleQuestionnaireConfirm" />
+        </van-popup>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { chatMessage } from '@/api/chat';
+import questionNaire from '../questionNaire/questionNaire.vue';
+
+interface QuestionnairePayload {
+  destination: string
+  days: number
+  people: number
+  travelDate?: string
+  rhythm: string
+  crowdTags: string[]
+}
 
 
 const inputMessage = ref('');
 const fileList= ref([{ url: 'https://fastly.jsdelivr.net/npm/@vant/assets/leaf.jpeg' }]);
+const showQuestionnaire = ref(false);
 
 // 定义 emit 事件用于通知父组件
 const emit = defineEmits<{
   send: [message: string, onMessage: (content: string) => void]
 }>();
+
+const sendByMessage = (message: string) => {
+  emit('send', message, async (_content: string) => {
+    // 预留流式内容回调
+  });
+}
+
+const handleQuestionnaireConfirm = (payload: QuestionnairePayload) => {
+  const dateText = payload.travelDate ? `，出行日期 ${payload.travelDate}` : ''
+  const content = `请根据以下信息规划行程：目的地 ${payload.destination}，游玩 ${payload.days} 天，出行人数 ${payload.people} 人${dateText}，游玩节奏 ${payload.rhythm}，人群标签 ${payload.crowdTags.join('、')}。`
+  showQuestionnaire.value = false
+  sendByMessage(content)
+}
 
 // 处理发送按钮点击事件：发送消息到父组件
 const handleSend = async () => {
@@ -49,9 +77,7 @@ const handleSend = async () => {
     // 发送消息后清空输入框
     inputMessage.value = '';
     // 触发 send 事件，通知父组件发送消息
-    emit('send', message,async (content: string) => {
-      // 可用流式回调，暂时没有做处理
-    });
+    sendByMessage(message)
   } catch (error) {
     console.error('发送消息失败:', error);
   }
@@ -71,6 +97,8 @@ const handleSend = async () => {
         align-items: center;
         margin: 5px 10px;
         gap: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
     }
 
     .input-box-area {

@@ -1,15 +1,16 @@
 <template>
     <div class="input-container">
         <!-- 图片上传展示 -->
-        <van-uploader v-model="fileList" multiple max-count="1" preview-size="70px" class="update-img"/>
+        <!-- <van-uploader v-model="fileList" multiple max-count="1" preview-size="70px" class="update-img"/> -->
         <div class="data-query">
          <van-button type="default" size="small" @click="showQuestionnaire = true">行程规划</van-button>
           <van-button type="default" size="small" @click="showTrainTicketPage = true">查询火车票</van-button>
           <van-button type="default" size="small" @click="showWeatherPage = true">查询天气</van-button>
+          <van-button type="default" size="small" @click="showComplaintPage = true">投诉模版</van-button>
             <van-uploader>
                 <!-- <van-button type="default" size="small" style="display: flex;">图片问答</van-button> -->
             </van-uploader>
-            <van-button type="default" size="small">一键投诉</van-button>
+         
         </div>
         <div class="input-box-area">
             <van-cell-group inset  class="input-content">
@@ -25,16 +26,20 @@
             </van-button>
         </div>
 
-        <van-popup v-model:show="showQuestionnaire" round position="bottom" :style="{ height: '88vh' }">
+        <van-popup v-model:show="showQuestionnaire" round position="bottom" :style="{ height: '80vh' }">
             <questionNaire @confirm="handleQuestionnaireConfirm" />
         </van-popup>
 
-        <van-popup v-model:show="showTrainTicketPage" round position="bottom" :style="{ height: '88vh' }">
+        <van-popup v-model:show="showTrainTicketPage" round position="bottom" :style="{ height: '40vh' }">
           <trainTickts @confirm="handleTrainTicketConfirm" />
         </van-popup>
 
-        <van-popup v-model:show="showWeatherPage" round position="bottom" :style="{ height: '88vh' }">
+        <van-popup v-model:show="showWeatherPage" round position="bottom" :style="{ height: '40vh' }">
           <weatherPage @confirm="handleWeatherConfirm" />
+        </van-popup>
+
+        <van-popup v-model:show="showComplaintPage" round position="bottom" :style="{ height: '80vh' }">
+          <complaintPage @confirm="handleComplaintConfirm" />
         </van-popup>
     </div>
 </template>
@@ -44,6 +49,7 @@ import { ref } from 'vue';
 import questionNaire from '../questionNaire/questionNaire.vue';
     import trainTickts from '../trainTickts/trainTickts.vue';
     import weatherPage from '../weather/weather.vue';
+import complaintPage from '../complaint/complaint.vue';
 
 interface QuestionnairePayload {
   destination: string
@@ -66,12 +72,20 @@ interface WeatherPayload {
   endDate: string
 }
 
+interface ComplaintPayload {
+  city: string
+  address: string
+  issueType: string
+  description: string
+}
+
 
 const inputMessage = ref('');
 const fileList= ref([{ url: 'https://fastly.jsdelivr.net/npm/@vant/assets/leaf.jpeg' }]);
 const showQuestionnaire = ref(false);
 const showTrainTicketPage = ref(false);
 const showWeatherPage = ref(false);
+const showComplaintPage = ref(false);
 
 // 定义 emit 事件用于通知父组件
 const emit = defineEmits<{
@@ -100,6 +114,12 @@ const handleTrainTicketConfirm = (payload: TrainTicketPayload) => {
 const handleWeatherConfirm = (payload: WeatherPayload) => {
   const content = `请帮我查询天气：城市 ${payload.city}，日期 ${payload.startDate} 至 ${payload.endDate}。`
   showWeatherPage.value = false
+  sendByMessage(content)
+}
+
+const handleComplaintConfirm = (payload: ComplaintPayload) => {
+  const content = `请根据以下信息生成投诉模板并转交后端处理：事发城市 ${payload.city}，详细地址 ${payload.address}，问题类型 ${payload.issueType}，问题描述 ${payload.description}。`
+  showComplaintPage.value = false
   sendByMessage(content)
 }
 

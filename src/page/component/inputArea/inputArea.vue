@@ -118,7 +118,7 @@ const handleWeatherConfirm = (payload: WeatherPayload) => {
 }
 
 const handleComplaintConfirm = (payload: ComplaintPayload) => {
-  const content = `请根据以下信息生成投诉模板并转交后端处理：事发城市 ${payload.city}，详细地址 ${payload.address}，问题类型 ${payload.issueType}，问题描述 ${payload.description}。`
+  const content = `请根据以下信息生成投诉模板：事发城市 ${payload.city}，详细地址 ${payload.address}，问题类型 ${payload.issueType}，问题描述 ${payload.description}。`
   showComplaintPage.value = false
   sendByMessage(content)
 }

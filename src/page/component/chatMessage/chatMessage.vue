@@ -26,6 +26,68 @@
           <weather v-else-if="msg.type === 'weather'" :data="msg.data" />
           <!-- 🚄 火车票卡片 -->
           <trainTickets v-else-if="msg.type === 'tickts'" :data="msg.data" />
+          <!-- 📝 投诉建议卡片 -->
+          <div v-else-if="msg.type === 'complaint'" class="complaint-card">
+            <h3 class="complaint-title">投诉建议</h3>
+
+            <div class="section">
+              <h4>推荐受理部门</h4>
+              <ul>
+                <li v-for="(d, i) in getComplaintData(msg).recommendedDepartments || []" :key="i" class="dept-item">
+                  <div class="dept-name">{{ d.name }}</div>
+                  <div class="dept-reason">{{ d.reason }}</div>
+                  <div class="dept-contact">{{ d.contact }}</div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h4>投诉渠道</h4>
+              <ul>
+                <li v-for="(c, i) in getComplaintData(msg).channels || []" :key="i" class="channel-item">
+                  <div class="channel-name">{{ c.name }}</div>
+                  <div class="channel-desc">{{ c.description }}</div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section phones">
+              <h4>举报电话</h4>
+              <div class="phones-list">
+                <span v-for="(p, i) in getComplaintData(msg).reportPhones || []" :key="i" class="phone">{{ p }}</span>
+              </div>
+            </div>
+
+            <div class="section">
+              <h4>投诉话术（可复制）</h4>
+              <pre class="script">{{ getComplaintData(msg).script }}</pre>
+              <button class="copy-btn" @click="copyText(getComplaintData(msg).script || '')">复制话术</button>
+            </div>
+
+            <div class="section timeline">
+              <h4>时间线</h4>
+              <ol>
+                <li v-for="(t, i) in getComplaintData(msg).timeline || []" :key="i" class="timeline-item">
+                  <div class="timeline-head"><strong>{{ t.stage }}</strong> <span class="duration">{{ t.expectedDuration }}</span></div>
+                  <ul>
+                    <li v-for="(m, k) in t.requiredMaterials" :key="k">{{ m }}</li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
+
+            <div class="section materials">
+              <h4>材料核对清单</h4>
+              <ul>
+                <li v-for="(it, i) in getComplaintData(msg).materialsChecklist || []" :key="i"><strong>{{ it.item }}：</strong>{{ it.description }}</li>
+              </ul>
+            </div>
+
+            <div class="section summary">
+              <h4>总结</h4>
+              <p>{{ getComplaintData(msg).summary }}</p>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -63,6 +125,14 @@ const messages = ref<any[]>([
 ]);
 const isLoading = ref(false)
 
+const getComplaintData = (msg: any) => {
+  const payload = msg?.data;
+  if (payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object') {
+    return payload.data;
+  }
+  return payload || {};
+}
+
 
 
 // 发送消息的函数：用户输入的消息通过这个函数添加到聊天中
@@ -99,7 +169,7 @@ const res = await handleMessage(
     messages.value[agentMessageIndex].isLoading = false; // ✅ 流结束关闭 loading
   }
 );
-    if (res?.type === 'weather') {
+   if (res?.type === 'weather') {
   messages.value.splice(agentMessageIndex, 1);
 
   messages.value.push({
@@ -118,11 +188,23 @@ const res = await handleMessage(
     data: res.data,
     isLoading: false
   });
+
+} else if (res?.type === 'complaint') {
+  messages.value.splice(agentMessageIndex, 1);
+
+  messages.value.push({
+    role: 'agent',
+    type: 'complaint',
+    data: res?.data?.data && typeof res.data.data === 'object' ? res.data.data : res.data,
+    isLoading: false
+  });
 }
 
     // 4. 移除智能体消息的加载状态
 
-    messages.value[agentMessageIndex].isLoading = false;
+    if (!res?.type) {
+  messages.value[agentMessageIndex].isLoading = false;
+}
   } catch (error) {
     console.error('发送失败:', error);
     // 错误处理：显示失败提示
@@ -147,6 +229,26 @@ const scrollToBottom = () => {
 };
 const renderMarkdown = (text: string) => {
   return marked.parse(text)
+}
+
+const copyText = async (text: string) => {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      alert('已复制到剪贴板');
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('已复制到剪贴板');
+    }
+  } catch (e) {
+    console.error('复制失败', e);
+    alert('复制失败，请手动复制');
+  }
 }
 
 </script>
@@ -254,5 +356,35 @@ const renderMarkdown = (text: string) => {
       margin-top: 10px;
     }
   }
+
+  /* 投诉卡片样式 */
+  .complaint-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    margin-left: 8px;
+    margin-top: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    max-width: 720px;
+  }
+
+  .complaint-card .complaint-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #111;
+  }
+
+  .complaint-card .section { margin-bottom: 10px; }
+  .complaint-card h4 { margin: 4px 0; font-size: 14px; color:#333 }
+  .complaint-card .dept-name, .complaint-card .channel-name { font-weight: 600 }
+  .complaint-card .dept-reason, .complaint-card .channel-desc { color:#666; margin-top:4px }
+  .complaint-card .dept-contact { color:#007acc; margin-top:4px }
+  .complaint-card .phones-list { display:flex; gap:8px; flex-wrap:wrap }
+  .complaint-card .phone { background:#f5f7fb; padding:4px 8px; border-radius:4px; color:#333 }
+  .complaint-card .script { background:#f7f7f9; padding:8px; border-radius:4px; white-space:pre-wrap }
+  .complaint-card .copy-btn { margin-top:6px; background:#007acc; color:#fff; border:none; padding:6px 10px; border-radius:4px; cursor:pointer }
+  .complaint-card .timeline-head { margin-bottom:6px }
+  .complaint-card .duration { color:#888; margin-left:8px; font-size:12px }
+  .complaint-card .materials ul, .complaint-card .timeline ul { margin:6px 0 0 16px }
 }
 </style>

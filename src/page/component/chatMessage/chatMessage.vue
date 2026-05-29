@@ -1,5 +1,7 @@
 <template>
   <div class="chat-message">
+    <defaultQuestion @select="handleQuickQuestion" />
+
     <!-- 动态渲染对话 -->
     <div v-for="(msg, index) in messages" :key="index"
       :class="['message-item', msg.role === 'user' ? 'user-item' : 'agent-item']">
@@ -109,6 +111,7 @@ import loading from '../loading/loading.vue';
 import trainTickets from '@/page/toolComponents/trainTickets.vue';
 import weather from '@/page/toolComponents/weather.vue';
 import inputArea from '../inputArea/inputArea.vue';
+import defaultQuestion from '../defaultQuestion/defualtQuestion.vue';
 import { handleMessage } from '@/api/handleMessage';
 import { marked } from 'marked'
 
@@ -131,6 +134,12 @@ const getComplaintData = (msg: any) => {
     return payload.data;
   }
   return payload || {};
+}
+
+const handleQuickQuestion = (message: string) => {
+  void handleSendMessage(message, () => {
+    // 快捷问题直接复用发送链路，无需额外回调处理。
+  });
 }
 
 

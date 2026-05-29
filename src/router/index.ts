@@ -7,12 +7,7 @@ const routes = [
         name: 'home',
         component: () => import('@/page/home/home.vue')
     },
-    {
-        // 商品详情页
-        path: '/goodsDetail',
-        name: 'goodsDetail',
-        component: () => import('@/page/goodsDetail/index.vue')
-    },
+   
     {
         // 投诉页
         path: '/complaintPage',

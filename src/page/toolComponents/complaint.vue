@@ -92,6 +92,7 @@ const copyText = async (text: string) => {
 <style lang="less" scoped>
 .complaint-card {
   background: #fff;
+  font-size: 15px;
   border-radius: 8px;
   padding: 12px;
   margin-left: 8px;

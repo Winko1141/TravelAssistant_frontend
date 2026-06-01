@@ -90,10 +90,12 @@ defineProps<{
 .tickets-bubble {
   background: linear-gradient(135deg, #667eea, #764ba2);
   border-radius: 12px;
-  padding: 12px;
-  margin-left: 8px;
+  padding: 12px 16px;
+  margin-left: 4px;
+  margin-bottom: 12px;
   color: #fff;
-  width: 360px;
+  max-width: calc(100% - 20px);
+  width: 100%;
   max-height: 400px;
   overflow-y: auto;
 

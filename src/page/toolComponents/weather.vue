@@ -73,10 +73,12 @@ defineProps<{
 .weather-bubble {
   background: linear-gradient(135deg, #5ee7df, #b490ca);
   border-radius: 12px;
-  padding: 12px;
+  padding: 12px 16px;
   margin-left: 8px;
+  margin-bottom: 12px;
   color: #fff;
-  width: 280px;
+  max-width: calc(100% - 40px);
+  width: 100%;
 }
 
 .header {

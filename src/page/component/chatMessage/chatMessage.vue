@@ -301,7 +301,7 @@ const copyText = async (text: string) => {
   // 智能体消息
   .agent-message {
     margin-top: 15px;
-    max-width: 90%;
+    max-width: 98%;
     // align-self: flex-start;
     opacity: 0;
     transform: translateY(20px);
@@ -344,16 +344,29 @@ const copyText = async (text: string) => {
     gap: 12px;
     margin-left: 8px;
     margin-top: 8px;
-    padding: 12px;
+    padding: 8px 8px;
     background: #f8f9fa;
     border-radius: 10px;
-    min-width: 200px;
+    max-width: calc(100% - 40px);
+    width: 100%;
 
     .multi-item {
-      padding: 8px;
+      padding: 1px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      padding: 10px 12px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      white-space: pre-wrap;
+      word-break: break-word;
     }
   }
   

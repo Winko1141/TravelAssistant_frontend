@@ -25,20 +25,28 @@
             <loading class="loading" />
           </div>
           <!-- 🌦 天气卡片 -->
-          <weather v-else-if="msg.type === 'weather'" :data="msg.data" />
+          <weather v-else-if="msg.type === 'weather'" :data="getWeatherData(msg)" />
           <!-- 🚄 火车票卡片 -->
-          <trainTickets v-else-if="msg.type === 'tickts'" :data="msg.data" />
+          <trainTickets v-else-if="msg.type === 'tickts'" :data="getTrainTicketData(msg)" />
           <!-- 📝 投诉建议卡片 -->
           <complaint v-else-if="msg.type === 'complaint'" :data="getComplaintData(msg)" />
+          <!-- 多意图结果卡片 -->
+          <div v-else-if="msg.type === 'multi'" class="multi-result">
+            <template v-if="msg.data && msg.data.length > 0">
+              <div v-for="(result, idx) in msg.data" :key="idx" class="multi-item">
+                <weather v-if="result.type === 'weather'" :data="getWeatherData(result)" />
+                <trainTickets v-else-if="result.type === 'tickts'" :data="getTrainTicketData(result)" />
+                <complaint v-else-if="result.type === 'complaint'" :data="getComplaintData(result)" />
+                <!-- chat文本内容 -->
+                <div v-else-if="result.type === 'chat' && result.data" class="chat-text" v-html="renderMarkdown(result.data)">
+                </div>
+              </div>
+            </template>
+          </div>
         </div>
 
       </div>
     </div>
-    <!-- 火车票查询结果 -->
-    <!-- <queryTrainTickts /> -->
-    <!-- 天气查询结果 -->
-    <!-- <weather /> -->
-    <!-- <searchGoods /> -->
     <div style="height: 100px;"></div>
     <!-- 底部输入框 -->
     <inputArea @send="handleSendMessage" />
@@ -53,10 +61,8 @@ import weather from '@/page/toolComponents/weather.vue';
 import complaint from '@/page/toolComponents/complaint.vue';
 import inputArea from '../inputArea/inputArea.vue';
 import defaultQuestion from '../defaultQuestion/defualtQuestion.vue';
-import { handleMessage } from '@/api/handleMessage';
+import { handleMessage, type MessageResponse } from '@/api/handleMessage';
 import { marked } from 'marked'
-
-
 
 // 消息列表
 const messages = ref<any[]>([
@@ -68,6 +74,22 @@ const messages = ref<any[]>([
   }
 ]);
 const isLoading = ref(false)
+
+const getWeatherData = (msg: any) => {
+  const payload = msg?.data;
+  if (payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object') {
+    return payload.data;
+  }
+  return payload || {};
+}
+
+const getTrainTicketData = (msg: any) => {
+  const payload = msg?.data;
+  if (payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object') {
+    return payload.data;
+  }
+  return payload || {};
+}
 
 const getComplaintData = (msg: any) => {
   const payload = msg?.data;
@@ -83,8 +105,6 @@ const handleQuickQuestion = (message: string) => {
   });
 }
 
-
-
 // 发送消息的函数：用户输入的消息通过这个函数添加到聊天中
 const handleSendMessage = async (message: string, onMessage: (content: string) => void) => {
   try {
@@ -96,65 +116,74 @@ const handleSendMessage = async (message: string, onMessage: (content: string) =
     });
 
     // 2. 添加加载状态的智能体消息，等待智能体的回复
-    // const agentMessageIndex = messages.value.length;
     messages.value.push({
       role: 'agent',
       type: 'text',
       content: '',
       isLoading: true
     });
-  const agentMessageIndex = messages.value.length - 1;
-    // 设置加载中状态
-    // isLoading.value = true;
+    const agentMessageIndex = messages.value.length - 1;
 
-    // 滚动到页面底部，确保最新消息可见
-    // scrollToBottom();
-const res = await handleMessage(
-  message,
-  (content) => {
-    messages.value[agentMessageIndex].content += content;
-    scrollToBottom(); // ✅ 实时滚动
-  },
-  () => {
-    messages.value[agentMessageIndex].isLoading = false; // ✅ 流结束关闭 loading
-  }
-);
-   if (res?.type === 'weather') {
-  messages.value.splice(agentMessageIndex, 1);
+    // 3. 调用后端接口处理消息
+    const res: MessageResponse | undefined = await handleMessage(
+      message,
+      (content) => {
+        messages.value[agentMessageIndex].content += content;
+        scrollToBottom(); // ✅ 实时滚动
+      },
+      () => {
+        messages.value[agentMessageIndex].isLoading = false; // ✅ 流结束关闭 loading
+      }
+    );
 
-  messages.value.push({
-    role: 'agent',
-    type: 'weather',
-    data: res.data,
-    isLoading: false
-  });
+    // 如果没有返回结果，保持文本类型
+    if (!res) {
+      messages.value[agentMessageIndex].isLoading = false;
+      return;
+    }
 
-} else if (res?.type === 'tickts') {
-  messages.value.splice(agentMessageIndex, 1);
+    // 4. 根据返回类型处理响应
+    if (res.type === 'multi') {
+      // 多意图结果（后端已聚合所有意图的回复）
+      messages.value.splice(agentMessageIndex, 1);
+      messages.value.push({
+        role: 'agent',
+        type: 'multi',
+        data: res.data,
+        isLoading: false
+      });
+    } else if (res.type === 'weather') {
+      // 天气查询
+      messages.value.splice(agentMessageIndex, 1);
+      messages.value.push({
+        role: 'agent',
+        type: 'weather',
+        data: res.data,
+        isLoading: false
+      });
+    } else if (res.type === 'tickts') {
+      // 火车票查询
+      messages.value.splice(agentMessageIndex, 1);
+      messages.value.push({
+        role: 'agent',
+        type: 'tickts',
+        data: res.data,
+        isLoading: false
+      });
+    } else if (res.type === 'complaint') {
+      // 投诉建议
+      messages.value.splice(agentMessageIndex, 1);
+      messages.value.push({
+        role: 'agent',
+        type: 'complaint',
+        data: res.data,
+        isLoading: false
+      });
+    } else {
+      // 默认保持文本类型
+      messages.value[agentMessageIndex].isLoading = false;
+    }
 
-  messages.value.push({
-    role: 'agent',
-    type: 'tickts',
-    data: res.data,
-    isLoading: false
-  });
-
-} else if (res?.type === 'complaint') {
-  messages.value.splice(agentMessageIndex, 1);
-
-  messages.value.push({
-    role: 'agent',
-    type: 'complaint',
-    data: res?.data?.data && typeof res.data.data === 'object' ? res.data.data : res.data,
-    isLoading: false
-  });
-}
-
-    // 4. 移除智能体消息的加载状态
-
-    if (!res?.type) {
-  messages.value[agentMessageIndex].isLoading = false;
-}
   } catch (error) {
     console.error('发送失败:', error);
     // 错误处理：显示失败提示
@@ -207,6 +236,7 @@ const copyText = async (text: string) => {
 .chat-message {
   display: flex;
   flex-direction: column;
+  font-size: 16px;
 
   /* 新增：控制每条消息项的横向布局 */
   .message-item {
@@ -307,6 +337,25 @@ const copyText = async (text: string) => {
     }
   }
 
+  // 多意图结果容器
+  .multi-result {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-left: 8px;
+    margin-top: 8px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    min-width: 200px;
+
+    .multi-item {
+      padding: 8px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
   
 }
 </style>
